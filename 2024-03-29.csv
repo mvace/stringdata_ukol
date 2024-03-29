@@ -1,13 +1,13 @@
-rohlik
-pivo
-chleb
-sunar
-tulipan
-omalovanky
-jogurt bily
-tulipan
-jogurt jahodovy
-krem na ruce
-kecup
-majoneza
-pepsi
+nazev,mnozstvi,cena za kus bez DPH,cena celkem bez DPH,cena za kus s DPH,cena celkem s DPH,status,error
+rohlik,10,2.5,25.0,3.0,30.2,OK,
+pivo,20,10.9,218.0,13.2,263.8,OK,
+chleb,1,15.0,15.0,18.1,18.1,OK,
+sunar,1,152.0,152.0,167.2,167.2,OK,
+tulipan,2,30.0,60.0,34.5,69.0,OK,
+jogurt bily,1,12.5,12.5,15.1,15.1,OK,
+kecup,1,45.0,45.0,54.4,54.4,OK,
+pepsi,2,35.0,70.0,42.4,84.7,OK,
+omalovanky,1.1,25.2,,,,ERROR,"Incorrect type for mnozstvi. Expected <class 'int'>, got <class 'float'>."
+jogurt jahodovy,1,12.5,,,,ERROR,Incorect tax rate. Rate zakldni does not exist.
+krem na ruce,1,,,,,ERROR,"Incorrect number of keys. Expected 4, got 3 Key missing: cena"
+majoneza,1,25.0,,,,ERROR,Key missing: dph_sazba
