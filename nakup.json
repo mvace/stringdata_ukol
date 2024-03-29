@@ -1,0 +1,14 @@
+{"data":[
+    {"nazev":"rohlik","dph_sazba":"zakladni","cena":2.5,"mnozstvi":10},
+    {"nazev":"pivo","dph_sazba":"zakladni","cena":10.9,"mnozstvi":20},
+    {"nazev":"chleb","dph_sazba":"zakladni","cena":15.0,"mnozstvi":1},
+    {"nazev":"sunar","dph_sazba":"druha_snizena","cena":152.0,"mnozstvi":1},
+    {"nazev":"tulipan","dph_sazba":"prvni_snizena","cena":30.0,"mnozstvi":1},
+    {"nazev":"omalovanky","dph_sazba":"druha_snizena","cena":25.2,"mnozstvi":1.1},
+    {"nazev":"jogurt bily","dph_sazba":"zakladni","cena":12.5,"mnozstvi":1},
+    {"nazev":"tulipan","dph_sazba":"prvni_snizena","cena":30.0,"mnozstvi":1},
+    {"nazev":"jogurt jahodovy","dph_sazba":"zakldni","cena":12.5,"mnozstvi":1},
+    {"nazev":"krem na ruce","dph_sazba":"zakladni","mnozstvi":1},
+    {"nazev":"kecup","dph_sazba":"zakladni","cena":45.0,"mnozstvi":1},
+    {"nazev":"majoneza","dph-sazba":"zakladni","cena":25.0,"mnozstvi":1},
+    {"nazev":"pepsi","dph_sazba":"zakladni","cena":35.0,"mnozstvi":2}]}
