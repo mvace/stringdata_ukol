@@ -4,69 +4,86 @@ from datetime import datetime
 
 
 def load_data(file_path):
-    with open(file_path, "r") as json_file:
+    with open(file_path, "r", encoding="utf-8") as json_file:
         return json.load(json_file)["data"]
 
 
-def validate_data(item):
+def validate_data(item, dph_sazby):
     errors = []
     required_dict = {"nazev": str, "dph_sazba": str, "cena": float, "mnozstvi": int}
 
-    if len(item) != len(required_dict):
+    if len(item) < len(required_dict):
         errors.append(
-            f"Incorrect number of keys. Expected {len(required_dict)}, got {len(item)}"
+            f"Lower number of keys. Expected {len(required_dict)}, got {len(item)}"
         )
 
-    for key, expected_type in required_dict.items():
+    for key, data_type in required_dict.items():
         if key not in item.keys():
             errors.append(f"Key missing: {key}")
             continue
 
-        if not isinstance(item[key], expected_type):
+        if not isinstance(item[key], data_type):
             errors.append(
-                f"Incorrect type for {key}. Expected {expected_type}, got {type(item[key])}."
+                f"Incorrect type for {key}. Expected {data_type}, got {type(item[key])}."
             )
 
-    if item.get("dph_sazba") and item.get("dph_sazba") not in [
-        "zakladni",
-        "prvni_snizena",
-        "druha_snizena",
-    ]:
+    if item.get("dph_sazba") and item.get("dph_sazba") not in dph_sazby:
         errors.append(f"Incorect tax rate. Rate {item['dph_sazba']} does not exist.")
 
     return errors
 
 
-def process_data(data, tax_rates):
+def calculate_prices(cena_kus_bez_dph, mnozstvi, dph_sazba, dph_sazby):
+    cena_kus_s_dph = cena_kus_bez_dph * dph_sazby[dph_sazba]
+    cena_celkem_bez_dph = cena_kus_bez_dph * mnozstvi
+    cena_celkem_s_dph = cena_celkem_bez_dph * dph_sazby[dph_sazba]
+    return cena_kus_s_dph, cena_celkem_bez_dph, cena_celkem_s_dph
+
+
+def process_data(data, dph_sazby):
     grocery_dict = {"items": {}, "errors": []}
     required_dict = {"nazev": str, "dph_sazba": str, "cena": float, "mnozstvi": int}
 
     for item in data:
-
-        errors = validate_data(item)
-
+        errors = validate_data(item, dph_sazby)
         nazev = item.get("nazev")
         mnozstvi = item.get("mnozstvi")
         dph_sazba = item.get("dph_sazba")
         cena_kus_bez_dph = item.get("cena")
         if errors:
-            status = "ERROR"
-            err_list = [nazev, mnozstvi, dph_sazba, cena_kus_bez_dph, status, errors]
+            err_list = [nazev, mnozstvi, dph_sazba, cena_kus_bez_dph, "ERROR", errors]
             grocery_dict["errors"].append(err_list)
         else:
-            cena_kus_bez_dph = item.get("cena")
-            cena_kus_s_dph = cena_kus_bez_dph * tax_rates[dph_sazba]
-            cena_celkem_bez_dph = cena_kus_bez_dph * mnozstvi
-            cena_celkem_s_dph = cena_celkem_bez_dph * tax_rates[dph_sazba]
+            cena_kus_s_dph, cena_celkem_bez_dph, cena_celkem_s_dph = calculate_prices(
+                cena_kus_bez_dph, mnozstvi, dph_sazba, dph_sazby
+            )
 
             if nazev in grocery_dict["items"]:
-                grocery_dict["items"][nazev]["mnozstvi"] += mnozstvi
-                grocery_dict["items"][nazev]["cena_celkem_bez_dph"] = (
-                    cena_kus_bez_dph * grocery_dict["items"][nazev]["mnozstvi"]
-                )
-                grocery_dict["items"][nazev]["cena_celkem_s_dph"] = (
-                    cena_celkem_s_dph * grocery_dict["items"][nazev]["mnozstvi"]
-                )
+                if (
+                    dph_sazba == grocery_dict["items"][nazev]["dph_sazba"]
+                    and cena_kus_bez_dph
+                    == grocery_dict["items"][nazev]["cena_kus_bez_dph"]
+                ):
+                    grocery_dict["items"][nazev]["mnozstvi"] += mnozstvi
+                    grocery_dict["items"][nazev]["cena_celkem_bez_dph"] = (
+                        cena_kus_bez_dph * grocery_dict["items"][nazev]["mnozstvi"]
+                    )
+                    grocery_dict["items"][nazev]["cena_celkem_s_dph"] = (
+                        cena_celkem_s_dph * grocery_dict["items"][nazev]["mnozstvi"]
+                    )
+                else:
+                    errors = [
+                        "Items with the same name have different prices or tax rates"
+                    ]
+                    err_list = [
+                        nazev,
+                        mnozstvi,
+                        dph_sazba,
+                        cena_kus_bez_dph,
+                        "ERROR",
+                        errors,
+                    ]
+                    grocery_dict["errors"].append(err_list)
 
             else:
 
@@ -85,18 +102,18 @@ def process_data(data, tax_rates):
 
 def export_to_csv(items_dict):
     current_date = datetime.now().strftime("%Y-%m-%d")
-    with open(f"{current_date}.csv", "w", newline="") as file:
+    with open(f"{current_date}.csv", "w", newline="", encoding="utf-8") as file:
         writer = csv.writer(file)
         writer.writerow(
             [
-                "nazev",
-                "mnozstvi",
-                "cena za kus bez DPH",
-                "cena celkem bez DPH",
-                "cena za kus s DPH",
-                "cena celkem s DPH",
-                "status",
-                "error",
+                "Název",
+                "Množství",
+                "Cena za kus bez DPH",
+                "Cena celkem bez DPH",
+                "Cena za kus s DPH",
+                "Cena celkem s DPH",
+                "Status",
+                "Error",
             ]
         )
 
@@ -130,9 +147,9 @@ def export_to_csv(items_dict):
 
 def main():
     file_path = "nakup.json"
-    sazby_dph = {"zakladni": 1.21, "prvni_snizena": 1.15, "druha_snizena": 1.1}
+    dph_sazby = {"zakladni": 1.21, "prvni_snizena": 1.15, "druha_snizena": 1.1}
     data = load_data(file_path)
-    items_dict = process_data(data, sazby_dph)
+    items_dict = process_data(data, dph_sazby)
     export_to_csv(items_dict)
 
     print(items_dict)
