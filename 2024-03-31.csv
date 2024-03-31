@@ -1,0 +1,13 @@
+Název,Množství,Cena za kus bez DPH,Cena celkem bez DPH,Cena za kus s DPH,Cena celkem s DPH,Status,Error
+pivo,20,10.9,218.0,13.2,263.8,OK,
+chleb,1,15.0,15.0,18.1,18.1,OK,
+sunar,1,152.0,152.0,167.2,167.2,OK,
+tulipan,2,30.0,60.0,34.5,69.0,OK,
+jogurt bily,1,12.5,12.5,15.1,15.1,OK,
+kecup,1,45.0,45.0,54.4,54.4,OK,
+pepsi,2,35.0,70.0,42.4,84.7,OK,
+rohlik,10,-2.5,,,,ERROR,Price is -2.5. Price cannot be lower or equal to zero. 
+omalovanky,1.1,25.2,,,,ERROR,"Incorrect type for mnozstvi. Expected <class 'int'>, got <class 'float'>."
+jogurt jahodovy,1,12.5,,,,ERROR,Incorect tax rate. Rate zakldni does not exist.
+krem na ruce,1,,,,,ERROR,Key missing: cena
+majoneza,1,25.0,,,,ERROR,Key missing: dph_sazba
