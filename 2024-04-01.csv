@@ -1,0 +1,4 @@
+Název,Množství,Cena za kus bez DPH,Cena celkem bez DPH,Cena za kus s DPH,Cena celkem s DPH,Status,Error
+,10,20.0,,,,ERROR,Key missing: nazev
+jablkový džus,2,30.0,,,,ERROR,Key missing: dph_sazba
+voda,1,,,,,ERROR,Key missing: cena

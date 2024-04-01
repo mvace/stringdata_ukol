@@ -2,6 +2,8 @@ import json
 import csv
 from datetime import datetime
 
+DPH_SAZBY = {"zakladni": 0.21, "prvni_snizena": 0.15, "druha_snizena": 0.1}
+
 
 def load_data(file_path):
     """
@@ -26,15 +28,11 @@ def validate_data(item, dph_sazby):
         dph_sazby (dict): Slovník s hodnotami sazeb DPH.
 
     Vrátí:
-        list: Seznam chybových zpráv. Pokud nejsou žádné chyby, vrátí prázdný seznam.
+        list: Seznam chybových zpráv.
+        Pokud nejsou žádné chyby, vrátí prázdný seznam.
     """
     errors = []
     required_dict = {"nazev": str, "dph_sazba": str, "cena": float, "mnozstvi": int}
-
-    if len(item) < len(required_dict):
-        errors.append(
-            f"Lower number of keys. Expected {len(required_dict)}, got {len(item)}"
-        )
 
     for key, data_type in required_dict.items():
         if key not in item.keys():
@@ -43,7 +41,7 @@ def validate_data(item, dph_sazby):
 
         if not isinstance(item[key], data_type):
             errors.append(
-                f"Incorrect type for {key}. Expected {data_type}, got {type(item[key])}."
+                f"Incorrect data type for {key}. Expected {data_type}, got {type(item[key])}."
             )
 
     if item.get("dph_sazba") and item.get("dph_sazba") not in dph_sazby:
@@ -51,12 +49,12 @@ def validate_data(item, dph_sazby):
 
     if item.get("mnozstvi") and item.get("mnozstvi") <= 0:
         errors.append(
-            f"Quantity is {item.get('mnozstvi')}. Quantity cannot be lower or equal to zero. "
+            f"Quantity is {item.get('mnozstvi')}. Quantity cannot be lower or equal to zero."
         )
 
     if item.get("cena") and item.get("cena") <= 0:
         errors.append(
-            f"Price is {item.get('cena')}. Price cannot be lower or equal to zero. "
+            f"Price is {item.get('cena')}. Price cannot be lower or equal to zero."
         )
 
     return errors
@@ -64,7 +62,8 @@ def validate_data(item, dph_sazby):
 
 def calculate_prices(cena_kus_bez_dph, mnozstvi, dph_sazba, dph_sazby):
     """
-    Vypočítá ceny s DPH a bez DPH pro jednotku a celkově a zaokrouhlí na desítky haléřů.
+    Vypočítá ceny s DPH a bez DPH pro jednotku a celkově a zaokrouhlí
+    na desítky haléřů.
 
     Parametry:
         cena_kus_bez_dph (float): Cena za kus bez DPH.
@@ -207,9 +206,8 @@ def main():
     Hlavní funkce pro načtení dat, jejich zpracování a export do CSV.
     """
     file_path = "nakup.json"
-    dph_sazby = {"zakladni": 0.21, "prvni_snizena": 0.15, "druha_snizena": 0.1}
     data = load_data(file_path)
-    items_dict = process_data(data, dph_sazby)
+    items_dict = process_data(data, DPH_SAZBY)
     export_to_csv(items_dict)
 
     print(items_dict)
