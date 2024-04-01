@@ -76,7 +76,7 @@ def calculate_prices(cena_kus_bez_dph, mnozstvi, dph_sazba, dph_sazby):
     Vrátí:
         tuple: Cena za kus s DPH, celková cena bez DPH, celková cena s DPH.
     """
-    cena_kus_s_dph = cena_kus_bez_dph * (1 + dph_sazby[dph_sazba])
+    cena_kus_s_dph = round(cena_kus_bez_dph * (1 + dph_sazby[dph_sazba]), 1)
     cena_celkem_bez_dph = cena_kus_bez_dph * mnozstvi
     cena_celkem_s_dph = round(cena_celkem_bez_dph * (1 + dph_sazby[dph_sazba]), 1)
     return cena_kus_s_dph, cena_celkem_bez_dph, cena_celkem_s_dph
@@ -131,7 +131,6 @@ def process_data(data, dph_sazby):
                         ["Items with the same name have different prices or tax rates"],
                     ]
                     grocery_dict["errors"].append(err_list)
-                    print(err_list)
 
             else:
 
